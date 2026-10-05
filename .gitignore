@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+data/raw/*
+data/processed/*
+outputs/*
+checkpoints/*
+reports/*
+*.log
+configs/local.env
+**/*.local.env
+!data/raw/.gitkeep
+!data/processed/.gitkeep

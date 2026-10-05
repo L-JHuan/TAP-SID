@@ -54,6 +54,48 @@ RUN_ROOT/
   eval/test_metrics.json
 ```
 
+## Baselines
+
+The repository includes the matched baselines used in the paper and industrial evaluation:
+
+```text
+baselines/
+  gnpr_industrial/       # Residual SID / GNPR matched industrial baseline
+  spacetime_gr/          # Spacetime-GR hierarchical-ID adaptation
+  geogr/                 # GeoGR identifier-only adaptation
+  geogr_full_pipeline/   # GeoGR P2P/RQ/EM/CPT/SFT full-pipeline adaptation
+```
+
+The GeoGR and Spacetime-GR implementations are paper-guided current-protocol adaptations rather than official author repositories. See [`baselines/COMPARISON_PROTOCOL.md`](baselines/COMPARISON_PROTOCOL.md) for the comparison boundary and required alignment checks.
+
+## Industrial execution
+
+For industrial logs, TAP-SID can use the Spark preprocessing entry:
+
+```bash
+cp configs/industrial.example.env configs/local.env
+bash scripts/prepare_data_spark.sh
+bash scripts/train.sh
+bash scripts/evaluate.sh
+```
+
+Residual SID and GeoGR full must reuse the exact TAP-SID `PROCESSED_ROOT`; they must not reconstruct an independent split. Their entry points are:
+
+```bash
+# Residual SID
+cd baselines/gnpr_industrial
+bash scripts/build_codebook.sh
+bash scripts/train.sh
+bash scripts/evaluate.sh
+
+# GeoGR full
+cd ../geogr_full_pipeline
+cp configs/industrial.example.env configs/industrial.local.env
+bash scripts/run_industrial_pipeline.sh "$PWD/configs/industrial.local.env"
+```
+
+The GeoGR industrial entry executes P2P representation learning, three-level RQ initialization, EM-style SID refinement, CPT, SFT, and catalog-constrained beam-10 evaluation in one command.
+
 ## Citation
 
 Citation information will be added after publication.
